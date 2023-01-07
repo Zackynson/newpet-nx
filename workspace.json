@@ -2,7 +2,6 @@
 	"version": 2,
 	"projects": {
 		"apps-users": "apps/users",
-		"database": "libs/database",
 		"infra": "infra",
 		"shared-config": "libs/shared/config",
 		"shared-infra": "libs/shared/infra",

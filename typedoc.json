@@ -1,7 +1,7 @@
 {
 	"$schema": "https://typedoc.org/schema.json",
 	"tsconfig": "tsconfig.typedoc.json",
-	"entryPoints": ["libs/database/src", "libs/shared/interfaces/src", "libs/shared/infra/src"],
+	"entryPoints": ["libs/shared/interfaces/src", "libs/shared/infra/src"],
 	"entryPointStrategy": "resolve",
 	"out": "docs/out",
 	"darkHighlightTheme": "dark-plus",
