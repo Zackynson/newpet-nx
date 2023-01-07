@@ -92,10 +92,15 @@ export class UsersStack extends StageStack {
 			rootResourceId: Fn.importValue(this.addPrefix(constants.PUBLIC_API_ROOT_RESOURCE_ID)),
 		});
 
-		const publicTransactionsResource = publicApi.root.addResource('users');
+		const publicTransactionsResource = publicApi.root.addResource('users', {
+			defaultCorsPreflightOptions: {
+				allowOrigins: apigateway.Cors.ALL_ORIGINS,
+				allowMethods: apigateway.Cors.ALL_METHODS,
+				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+			},
+		});
 
-		const allowedMethods = ['GET'];
-
+		const allowedMethods = ['GET', 'POST'];
 		for (const method of allowedMethods) {
 			publicTransactionsResource.addMethod(method, new apigateway.LambdaIntegration(lambdaResource));
 		}

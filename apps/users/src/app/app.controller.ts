@@ -1,13 +1,30 @@
-import { Controller, Get } from '@nestjs/common';
+import { CreateUserDTO } from '@libs/users';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ControllerResponse } from '@shared/interfaces';
 
 import { AppService } from './app.service';
 
-@Controller()
+@Controller('users')
 export class AppController {
 	constructor(private readonly appService: AppService) {}
 
-	@Get('users')
+	@Post()
+	async createUser(@Body() user: CreateUserDTO): Promise<ControllerResponse> {
+		const userId = await this.appService.createUser(user);
+
+		return {
+			message: 'User created successfully',
+			data: { userId },
+		};
+	}
+
+	@Get()
 	async getData() {
-		return this.appService.getData();
+		const docs = await this.appService.getUsers();
+
+		return {
+			message: 'User created successfully',
+			data: { ...docs },
+		};
 	}
 }

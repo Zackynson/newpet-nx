@@ -32,9 +32,11 @@ export class UsersService {
 	 * @param params.transaction transaction object to populate the document
 	 * @param params.dbName Db name to have the Connection pointing to
 	 */
-	create(params: { user?: Partial<User>; dbName?: string } = {}): UserDocument {
+	async create(params: { user?: Partial<User>; dbName?: string } = {}): Promise<string> {
 		const model = this.userModel(params.dbName);
-		return new model(params.user);
+		const userModel = await new model(params.user).save();
+
+		return userModel._id.toString();
 	}
 
 	async findById(userId: string): Promise<UserDocument> {
