@@ -1,0 +1,12 @@
+GET https://ssn4zldt26.execute-api.us-east-1.amazonaws.com/dev/users
+
+###
+POST  https://ssn4zldt26.execute-api.us-east-1.amazonaws.com/dev/users
+content-type: application/json
+
+{
+	"name":"teste",
+	"email":"teste@teste.com",
+	"password":"teste12345",
+	"confirmPassword":"teste12345"
+}

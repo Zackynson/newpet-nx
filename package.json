@@ -22,7 +22,7 @@
 		"register-deploy:affected": "nx affected --target=register-deploy",
 		"register-deploy:all": "./scripts/register-all-deploy.sh",
 		"deploy": "cdk deploy --require-approval never --all",
-		"run-and-build": "npm run build:affected && npm run install-deps:affected && cdk deploy --require-approval never --all"
+		"build-and-deploy": " npx nx run-many --target=build --configuration=production --all && npx nx run-many --target=install-dependencies --all=true && cdk deploy"
 	},
 	"private": true,
 	"dependencies": {

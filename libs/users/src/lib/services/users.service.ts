@@ -57,9 +57,9 @@ export class UsersService {
 			{
 				_id: 1,
 				name: 1,
+				email: 1,
 				createdAt: 1,
 				updatedAt: 1,
-				password: 0,
 			}
 		);
 		console.log('List users on mongodb success', users);
