@@ -23,7 +23,6 @@ export class AppController {
 		const docs = await this.appService.getUsers();
 
 		return {
-			message: 'User created successfully',
 			data: { ...docs },
 		};
 	}

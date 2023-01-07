@@ -50,9 +50,18 @@ export class UsersService {
 		return user;
 	}
 
-	async list(): Promise<UserDocument[]> {
+	async list(): Promise<Omit<UserDocument, 'password'>[]> {
 		console.log('List users on mongodb attempt');
-		const users = await this.userModel().find();
+		const users = await this.userModel().find(
+			{},
+			{
+				_id: 1,
+				name: 1,
+				createdAt: 1,
+				updatedAt: 1,
+				password: 0,
+			}
+		);
 		console.log('List users on mongodb success', users);
 
 		return users;
