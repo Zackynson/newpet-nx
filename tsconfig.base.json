@@ -1,0 +1,34 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"target": "es2018",
+		"module": "commonjs",
+		"lib": ["es2018", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"strictNullChecks": true,
+		"useUnknownInCatchVariables": true,
+		"baseUrl": ".",
+		"paths": {
+			"@infra": ["infra/index.ts"],
+			"@libs/auth": ["libs/auth/src/index.ts"],
+			"@libs/database": ["libs/database/src/index.ts"],
+			"@libs/transactions": ["libs/transactions/src/index.ts"],
+			"@libs/workflow": ["libs/workflow/src/index.ts"],
+			"@libs/users": ["libs/users/src/index.ts"],
+			"@shared/config": ["libs/shared/config/src/index.ts"],
+			"@shared/dtos": ["libs/shared/dtos/src/index.ts"],
+			"@shared/infra": ["libs/shared/infra/src/index.ts"],
+			"@shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
+			"@shared/mongoose": ["libs/shared/mongoose/src/index.ts"]
+		}
+	},
+	"exclude": ["node_modules", "tmp"]
+}

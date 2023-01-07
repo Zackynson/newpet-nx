@@ -1,0 +1,15 @@
+{
+	"recommendations": [
+		"nrwl.angular-console",
+		"esbenp.prettier-vscode",
+		"gruntfuggly.todo-tree",
+		"pkief.material-icon-theme",
+		"firsttris.vscode-jest-runner",
+		"hediet.vscode-drawio",
+		"mermade.openapi-lint",
+		"redhat.vscode-extension-serverless-workflow-editor",
+		"serverlessworkflow.serverless-workflow-vscode-extension",
+		"vivaxy.vscode-conventional-commits",
+		"42crunch.vscode-openapi"
+	]
+}

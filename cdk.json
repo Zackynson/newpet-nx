@@ -1,0 +1,55 @@
+{
+	"app": "npx ts-node --prefer-ts-exts -r tsconfig-paths/register --project infra/tsconfig.json infra/main.cdk.ts",
+	"watch": {
+		"include": ["apps/**"],
+		"exclude": [
+			"README.md",
+			"cdk*.json",
+			"**/*.d.ts",
+			"**/*.js",
+			"tsconfig.json",
+			"package*.json",
+			"yarn.lock",
+			"node_modules",
+			"test"
+		]
+	},
+	"context": {
+		"project": "newpet",
+		"orchestratorInfraProject": "orchestrator",
+		"dev": {
+			"account": "566163553601",
+			"regions": ["us-east-1"],
+			"mainInfo": {
+				"region": "us-east-1",
+				"vpc": "vpc-d82554a5"
+			}
+		},
+		"beta": {
+			"account": "566163553601",
+			"regions": ["us-east-1"],
+			"mainInfo": {
+				"region": "us-east-1",
+				"vpc": "vpc-d82554a5"
+			}
+		},
+		"prod": {
+			"account": "566163553601",
+			"regions": ["us-east-1"],
+			"mainInfo": {
+				"region": "us-east-1",
+				"vpc": "vpc-d82554a5"
+			}
+		},
+		"@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
+		"@aws-cdk/core:stackRelativeExports": true,
+		"@aws-cdk/aws-rds:lowercaseDbIdentifier": true,
+		"@aws-cdk/aws-lambda:recognizeVersionProps": true,
+		"@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021": true,
+		"@aws-cdk-containers/ecs-service-extensions:enableDefaultLogDriver": true,
+		"@aws-cdk/aws-ec2:uniqueImdsv2TemplateName": true,
+		"@aws-cdk/core:checkSecretUsage": true,
+		"@aws-cdk/aws-iam:minimizePolicies": true,
+		"@aws-cdk/core:target-partitions": ["aws", "aws-cn"]
+	}
+}

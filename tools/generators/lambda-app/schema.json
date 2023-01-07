@@ -1,0 +1,39 @@
+{
+	"$schema": "http://json-schema.org/schema",
+	"cli": "nx",
+	"$id": "lambda-app",
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"description": "Application name. e.g.: my-app",
+			"$default": {
+				"$source": "argv",
+				"index": 0
+			},
+			"x-prompt": "What name would you like to use for the application?",
+			"pattern": "^[a-zA-Z].*$"
+		},
+		"type": {
+			"type": "string",
+			"enum": ["standalone", "full-http-featured"],
+			"default": "standalone",
+			"description": "Determines the type of scaffold to be generated.\nStandalone: Should be used when you won't integrate with API Gateway.\nFull HTTP Featured: Should be used when you need handle more than one HTTP method or HTTP-related features (routing, guards, interceptors, pipes, etc.).",
+			"x-prompt": {
+				"message": "Which type of library would you like to generate?",
+				"type": "list",
+				"items": [
+					{
+						"value": "standalone",
+						"label": "Standalone"
+					},
+					{
+						"value": "full-http-featured",
+						"label": "Full HTTP Featured"
+					}
+				]
+			}
+		}
+	},
+	"required": ["name"]
+}

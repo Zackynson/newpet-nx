@@ -1,0 +1,48 @@
+{
+	"extends": "nx/presets/core.json",
+	"npmScope": "newpet",
+	"affected": {
+		"defaultBase": "master"
+	},
+	"cli": {
+		"defaultCollection": "@nrwl/workspace"
+	},
+	"implicitDependencies": {
+		"package.json": {
+			"dependencies": "*",
+			"devDependencies": "*"
+		},
+		".eslintrc.json": "*"
+	},
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "@nrwl/nx-cloud",
+			"options": {
+				"cacheableOperations": ["build", "lint", "test", "e2e"]
+			}
+		}
+	},
+	"workspaceLayout": {
+		"appsDir": "apps"
+	},
+	"targetDependencies": {
+		"build": [
+			{
+				"target": "build",
+				"projects": "dependencies"
+			}
+		]
+	},
+	"plugins": ["./tools/plugins/infra-project-graph-plugin/index.js"],
+	"pluginsConfig": {
+		"@nrwl/js": {
+			"analyzeSourceFiles": true
+		}
+	},
+	"targetDefaults": {
+		"build": {
+			"dependsOn": ["^build"]
+		}
+	},
+	"$schema": "./node_modules/nx/schemas/nx-schema.json"
+}

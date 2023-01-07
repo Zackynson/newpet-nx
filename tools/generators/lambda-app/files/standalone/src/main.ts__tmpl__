@@ -1,0 +1,40 @@
+import { INestApplicationContext } from '@nestjs/common';
+import { ContextIdFactory, NestFactory } from '@nestjs/core';
+import { Context, Handler } from 'aws-lambda';
+import { firstValueFrom, from, Observable, shareReplay } from 'rxjs';
+<% var serviceName = nameCamelCase + 'Service'; %>
+import { AppModule } from './app/app.module';
+import { <%= serviceName %> } from './app/<%= name %>.service';
+
+let appObservable: Observable<INestApplicationContext>;
+
+function bootstrap(): Observable<INestApplicationContext> {
+	if (!appObservable) {
+		appObservable = from(NestFactory.createApplicationContext(AppModule)).pipe(shareReplay());
+	}
+
+	return appObservable;
+}
+
+bootstrap();
+
+// The event type below can be annotated. Do so by creating an interface.
+// If one needs to use this interface, you could create the interface in a shared library.
+export const handler: Handler = async (event: unknown, context: Context) => {
+	const app = await firstValueFrom(appObservable);
+
+	// For more info about scoped providers, ContextIdFactory and getting current sub-tree
+	// Refer to:
+	// * https://docs.nestjs.com/fundamentals/module-ref#resolving-scoped-providers
+	// * https://docs.nestjs.com/fundamentals/module-ref#registering-request-provider
+	// * https://docs.nestjs.com/fundamentals/module-ref#getting-current-sub-tree
+	const contextId = ContextIdFactory.create();
+	app.registerRequestByContextId({ context }, contextId);
+
+	// Here you could resolve your services and use them the way it makes sense to you
+	const service = await app.resolve<<%= serviceName %>>(<%= serviceName %>, contextId);
+
+	const data = service.getData();
+
+	return { data };
+};

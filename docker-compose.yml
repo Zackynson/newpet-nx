@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    restart: unless-stopped
+    ports:
+      - 27018:27017
+    volumes:
+      - mongo_data:/data/db
+
+  dynamodb-local:
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath ./data
+    image: "amazon/dynamodb-local:latest"
+    restart: unless-stopped
+    user: root
+    container_name: dynamodb-local
+    ports:
+      - 8008:8000
+    volumes:
+      - dynamo_data:/home/dynamodblocal/data
+    working_dir: /home/dynamodblocal
+
+volumes:
+  mongo_data:
+    driver: local
+  dynamo_data:
+    driver: local
+
+networks:
+  default:
+    name: newpet_network

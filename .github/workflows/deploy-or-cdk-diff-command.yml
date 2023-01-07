@@ -1,0 +1,89 @@
+name: CDK Diff 🔃
+on:
+  repository_dispatch:
+    types: [cdk-diff-command, deploy-command]
+  workflow_dispatch:
+
+jobs:
+  deploy-or-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.client_payload.slash_command.args.named.head }}
+
+      # We need to be able to deploy to the correct stage based on the real
+      # base branch and not the one provided by the command
+      - name: Get Deploy Stage
+        id: deploy-info
+        uses: ./.github/actions/get-deploy-stage
+        with:
+          base-ref: ${{ github.base_ref }}
+
+      - id: vars
+        run: |
+          if [[ "${{ github.event.client_payload.slash_command.command }}" = "deploy" ]]; then
+            echo "comment-title=CDK Deploy 🚀" >> $GITHUB_OUTPUT
+            echo "cdk-subcommand=deploy" >> $GITHUB_OUTPUT
+          else
+            echo "comment-title=CDK Diff 🔃" >> $GITHUB_OUTPUT
+            echo "cdk-subcommand=diff" >> $GITHUB_OUTPUT
+          fi
+          echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"  >> $GITHUB_OUTPUT
+
+      - name: Validate command argument
+        id: validation
+        run: |
+          INPUT="${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}"
+          if [[ $INPUT =~ ^(all|affected)$ ]]; then
+            echo "deployment-type=$INPUT" >> $GITHUB_OUTPUT
+          elif [[ -z $INPUT ]]; then
+            echo "deployment-type=all" >> $GITHUB_OUTPUT
+          else
+            echo "Invalid command: $INPUT"
+            exit 1
+          fi
+
+      - name: Build and run CDK
+        uses: ./.github/actions/build-and-run-cdk
+        with:
+          deployment-type: ${{ steps.validation.outputs.deployment-type }}
+          cdk-subcommand: ${{ steps.vars.outputs.cdk-subcommand }}
+          base-ref: ${{ github.event.client_payload.slash_command.args.named.base }}
+          head-ref: ${{ github.event.client_payload.slash_command.args.named.head }}
+          region-glob: ${{ github.event.client_payload.slash_command.args.named.region }}
+          stack-glob: ${{ github.event.client_payload.slash_command.args.named.stack }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          override-stage: ${{ steps.deploy-info.outputs.STAGE }}
+
+      - name: Set Diff Output as Env
+        run: |
+          echo "CDK_DIFF_OUTPUT<<EOF" >> $GITHUB_ENV
+          cat output.log | perl -pe 's/^Stack\s/📦 Stack /g' | perl -pe 's/\[-\]/\[-\] ❌/g' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Comment diff
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          body: |
+            #### ${{ steps.vars.outputs.comment-title }}
+            <details><summary>Show Output</summary>
+
+            ***Region:** ${{ github.event.client_payload.slash_command.args.named.region }}
+            ***Base:** ${{ github.event.client_payload.slash_command.args.named.base }}*
+            ***Head:** ${{ github.event.client_payload.slash_command.args.named.head }}*
+
+            ```
+            ${{ env.CDK_DIFF_OUTPUT }}
+            ```
+
+            </details>
+
+            *Workflow: `${{ github.workflow }}`,*
+            *Action: [action-${{ github.run_id }}](${{ steps.vars.outputs.run-url }})*

@@ -1,0 +1,80 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "apps/users/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/webpack:webpack",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/apps/users",
+				"main": "apps/users/src/main.ts",
+				"tsConfig": "apps/users/tsconfig.app.json",
+				"webpackConfig": "apps/users/webpack.config.js",
+				"externalDependencies": "all",
+				"target": "node",
+				"compiler": "tsc"
+			},
+			"configurations": {
+				"production": {
+					"optimization": false,
+					"extractLicenses": false,
+					"inspect": false,
+					"fileReplacements": [
+						{
+							"replace": "apps/users/src/environments/environment.ts",
+							"with": "apps/users/src/environments/environment.prod.ts"
+						}
+					]
+				}
+			}
+		},
+		"serve": {
+			"executor": "@ns3/nx-serverless:sls",
+			"options": {
+				"command": "offline",
+				"buildTarget": "apps-users:build"
+			}
+		},
+		"install-dependencies": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					{
+						"command": "cp $(node -e \"console.log(require('find-up').sync('package-lock.json'))\") dist/apps/users",
+						"forwardAllArgs": false
+					},
+					{
+						"command": "cd dist/apps/users && npm ci",
+						"forwardAllArgs": false
+					}
+				],
+				"parallel": false
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["apps/users/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/apps/users"],
+			"options": {
+				"jestConfig": "apps/users/jest.config.ts",
+				"passWithNoTests": true,
+				"codeCoverage": true
+			}
+		},
+		"register-deploy": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "STACK_PATH=apps/users/infra/users.stack.ts scripts/register-deploy.sh",
+				"forwardAllArgs": false
+			}
+		}
+	},
+	"tags": ["nestjs", "backend"]
+}

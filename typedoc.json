@@ -1,0 +1,23 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"tsconfig": "tsconfig.typedoc.json",
+	"entryPoints": ["libs/database/src", "libs/shared/interfaces/src", "libs/shared/infra/src"],
+	"entryPointStrategy": "resolve",
+	"out": "docs/out",
+	"darkHighlightTheme": "dark-plus",
+	"mergeModulesRenameDefaults": true,
+	"excludeProtected": false,
+	"mergeModulesMergeMode": "module",
+	"includes": "docs/includes",
+	"pluginMonorepoReadmes:rootFiles": ["README.md", "project.json", "package.json"],
+	"media": "docs/medias",
+	"replaceText": {
+		"replacements": [
+			{
+				"pattern": "＠",
+				"replace": "@"
+			}
+		]
+	},
+	"githubPages": true
+}

@@ -1,0 +1,38 @@
+import { isValidStackId, StageStack } from '@shared/infra';
+import { Duration } from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Construct } from 'constructs';
+import * as path from 'path';
+
+export class <%= nameCamelCase %>Stack extends StageStack {
+	constructor(scope: Construct, id: string, props?: StackProps) {
+		super(scope, id, props);
+
+		if (!isValidStackId(id, <%= nameCamelCase %>Stack.name)) {
+			throw new Error('Invalid id for stack ' + <%= nameCamelCase %>Stack.name);
+		}
+
+		if (!this.bundlingRequired) {
+			// We must skip undesired stacks to be able to deploy specific stacks.
+			// Refer to: https://github.com/aws/aws-cdk/issues/6743
+			console.info('Skipping ' + this.stackName);
+			return;
+		}
+
+		const lambdaResource = new lambda.Function(this, '<%= nameCamelCase %>Fn', {
+			// NOTE: If you change the runtime, please be aware that you might change the
+			// tsconfig.app.json target and lib properties. For the correct mapping
+			// refer to https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping.
+			runtime: lambda.Runtime.NODEJS_16_X,
+			handler: 'main.handler',
+			code: lambda.Code.fromAsset(path.join(__dirname, '../../../dist/<%= appsDir %>/<%= name %>')),
+			// NOTE: You should choose the memory size considering the speed you need for
+			// your application but also thinking about the costs.
+			memorySize: 256,
+			timeout: Duration.seconds(30),
+			environment: {
+				STAGE: this.stage,
+			},
+		});
+	}
+}

@@ -1,0 +1,37 @@
+name: Command Dispatch for PR events
+on:
+  issue_comment:
+    types: [created]
+
+# Enables maintainers with "write" permission to trigger jobs on external pull requests.
+
+jobs:
+  command-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR Info
+        id: pr_info
+        run: |
+          GH_OUTPUT=$(gh pr view ${{ github.event.issue.number }} --json baseRefName,headRefName --repo "${{ github.event.repository.full_name }}")
+          BASE=$(echo $GH_OUTPUT | jq -r ".baseRefName")
+          HEAD=$(echo $GH_OUTPUT | jq -r ".headRefName")
+          echo "base-ref-name=$BASE" >> $GITHUB_OUTPUT
+          echo "head-ref-name=$HEAD" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Dispatch command
+        uses: peter-evans/slash-command-dispatch@v2
+        with:
+          reaction-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          permission: write
+          issue-type: pull-request
+          commands: |
+            cdk-diff
+            unit-test
+            deploy
+          static-args: |
+            base=${{ steps.pr_info.outputs.base-ref-name }}
+            head=${{ steps.pr_info.outputs.head-ref-name }}
+            region=*
+            stack=*

@@ -1,0 +1,11 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true
+	},
+	"include": ["libs/**/*"],
+	"exclude": ["node_modules", "apps/**/*", "libs/synapse-node"]
+}

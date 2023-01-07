@@ -1,0 +1,23 @@
+import { Test } from '@nestjs/testing';
+<% var serviceName = nameCamelCase + 'Service'; %>
+import { <%= serviceName %> } from './<%= name %>.service';
+
+describe('<%= serviceName %>', () => {
+	let service: <%= serviceName %>;
+
+	beforeAll(async () => {
+		const app = await Test.createTestingModule({
+			providers: [<%= serviceName %>],
+		}).compile();
+
+		service = app.get<<%= serviceName %>>(<%= serviceName %>);
+	});
+
+	describe('getData', () => {
+		it('should return "Hello world!"', () => {
+			expect(service.getData()).toEqual({
+				message: 'Hello world!',
+			});
+		});
+	});
+});

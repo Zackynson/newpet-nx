@@ -1,0 +1,22 @@
+{
+	"$schema": "../../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "libs/shared/infra/src",
+	"targets": {
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["libs/shared/infra/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/libs/shared/infra"],
+			"options": {
+				"jestConfig": "libs/shared/infra/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": ["infra"]
+}

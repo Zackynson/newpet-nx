@@ -1,0 +1,8 @@
+import { Module } from '@nestjs/common';
+
+import { <%= nameCamelCase %>Service } from './<%= name %>.service';
+
+@Module({
+	providers: [<%= nameCamelCase %>Service],
+})
+export class AppModule {}

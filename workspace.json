@@ -1,0 +1,15 @@
+{
+	"version": 2,
+	"projects": {
+		"apps-users": "apps/users",
+		"database": "libs/database",
+		"infra": "infra",
+		"shared-config": "libs/shared/config",
+		"shared-infra": "libs/shared/infra",
+		"shared-interfaces": "libs/shared/interfaces",
+		"shared-mongoose": "libs/shared/mongoose",
+
+		"users": "libs/users"
+	},
+	"$schema": "./node_modules/nx/schemas/workspace-schema.json"
+}

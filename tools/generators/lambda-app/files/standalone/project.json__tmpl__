@@ -1,0 +1,79 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "<%= appsDir %>/<%= name %>/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/webpack:webpack",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/<%= appsDir %>/<%= name %>",
+				"main": "<%= appsDir %>/<%= name %>/src/main.ts",
+				"tsConfig": "<%= appsDir %>/<%= name %>/tsconfig.app.json",
+				"webpackConfig": "<%= appsDir %>/<%= name %>/webpack.config.js",
+				"externalDependencies": "all",
+				"target": "node",
+				"compiler": "tsc"
+			},
+			"configurations": {
+				"production": {
+					"optimization": false,
+					"extractLicenses": false,
+					"inspect": false,
+					"sourceMap": false,
+					"fileReplacements": [
+						{
+							"replace": "<%= appsDir %>/<%= name %>/src/environments/environment.ts",
+							"with": "<%= appsDir %>/<%= name %>/src/environments/environment.prod.ts"
+						}
+					]
+				}
+			}
+		},
+		"install-dependencies": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+						{
+							"command": "cp $(node -e \"console.log(require('find-up').sync('package-lock.json'))\") dist/<%= appsDir %>/<%= name %>",
+							"forwardAllArgs": false
+						},
+						{
+							"command": "cd dist/<%= appsDir %>/<%= name %> && npm ci",
+							"forwardAllArgs": false
+						}
+				],
+				"parallel": false
+			}
+		},
+		"serve": {
+			"executor": "@nrwl/node:node",
+			"options": {
+				"buildTarget": "<%= name %>:build"
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["<%= appsDir %>/<%= name %>/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/<%= appsDir %>/<%= name %>"],
+			"options": {
+				"jestConfig": "<%= appsDir %>/<%= name %>/jest.config.ts",
+				"passWithNoTests": true,
+				"codeCoverage": true
+			}
+		},
+		"register-deploy": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "STACK_PATH=<%= appsDir %>/<%= name %>/infra/<%= name %>.stack.ts scripts/register-deploy.sh"
+			}
+		}
+	},
+	"tags": ["nestjs", "backend"]
+}
