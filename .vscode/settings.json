@@ -24,12 +24,7 @@
 		"nx",
 		"infra",
 		"shared-interfaces",
-		"database",
-		"node-synapse",
-		"transactions",
-		"workflow",
-		"auth",
-		"apps-composer"
+		"user",
 	],
 	"[typescript]": {
 		"editor.tabSize": 2,
