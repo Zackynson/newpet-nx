@@ -17,7 +17,7 @@ const Configuration: UserConfig = {
 			['build', 'chore', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test', 'sample'],
 		],
 		'scope-case': [2, 'always', ['lower-case', 'kebab-case']],
-		'scope-enum': [2, 'always', ['nx', 'infra', 'shared-interfaces', 'database', 'node-synapse']],
+		'scope-enum': [2, 'always', ['nx', 'infra', 'users', 'shared-interfaces', 'database']],
 		'body-max-line-length': [0, 'always', 100],
 		'header-max-length': [0, 'always', 100],
 	},
