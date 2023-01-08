@@ -1,6 +1,9 @@
 import { CreateUserDTO } from '@libs/users';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request } from '@nestjs/common';
 import { ControllerResponse } from '@shared/interfaces';
+import { S3 } from 'aws-sdk';
+// This is a hack to make Multer available in the Express namespace
+import 'multer';
 
 import { AppService } from './app.service';
 
@@ -15,6 +18,27 @@ export class AppController {
 		return {
 			message: 'User created successfully',
 			data: { userId },
+		};
+	}
+
+	@Post(':userId/avatar')
+	async uploadFile(@Request() req: any) {
+		const s3 = new S3({
+			region: 'us-east-1',
+		});
+
+		const res = await s3
+			.upload({
+				Bucket: 'newpet-dev-images',
+				Key: 'avatar.jpg',
+				ContentType: 'image/jpeg',
+				Body: req.body.file,
+			})
+			.promise();
+
+		return {
+			message: 'File uploaded successfully',
+			data: { ...res },
 		};
 	}
 

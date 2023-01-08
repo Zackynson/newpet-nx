@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 import serverlessExpress from '@vendia/serverless-express';
 import { APIGatewayProxyEvent, Callback, Context, Handler } from 'aws-lambda';
-import express from 'express';
+import express, { json, urlencoded } from 'express';
 import { AppModule } from './app/app.module';
 
 let server: Handler;
@@ -21,6 +21,9 @@ async function bootstrap(): Promise<Handler> {
 				enableDebugMessages: true,
 			})
 		);
+		app.use(json({ limit: '50mb' }));
+		app.use(urlencoded({ extended: true, limit: '50mb' }));
+
 		await app.init();
 
 		server = serverlessExpress({ app: expressApp });

@@ -92,6 +92,7 @@ export class UsersStack extends StageStack {
 			rootResourceId: Fn.importValue(this.addPrefix(constants.PUBLIC_API_ROOT_RESOURCE_ID)),
 		});
 
+		// users
 		const publicUsersRoute = publicApi.root.addResource('users', {
 			defaultCorsPreflightOptions: {
 				allowOrigins: apigateway.Cors.ALL_ORIGINS,
@@ -100,9 +101,28 @@ export class UsersStack extends StageStack {
 			},
 		});
 
-		const allowedMethods = ['GET', 'POST'];
-		for (const method of allowedMethods) {
-			publicUsersRoute.addMethod(method, new apigateway.LambdaIntegration(lambdaResource));
-		}
+		publicUsersRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
+		publicUsersRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+
+		// users/{userId}
+		const publicUserIdRoute = publicUsersRoute.addResource('{userId}', {
+			defaultCorsPreflightOptions: {
+				allowOrigins: apigateway.Cors.ALL_ORIGINS,
+				allowMethods: apigateway.Cors.ALL_METHODS,
+				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+			},
+		});
+		publicUserIdRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+
+		// users/avatar
+		const avatarResource = publicUserIdRoute.addResource('avatar', {
+			defaultCorsPreflightOptions: {
+				allowOrigins: apigateway.Cors.ALL_ORIGINS,
+				allowMethods: apigateway.Cors.ALL_METHODS,
+				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+			},
+		});
+
+		avatarResource.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
 	}
 }

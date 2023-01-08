@@ -1,6 +1,7 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
+		"types": ["Multer"],
 		"rootDir": ".",
 		"sourceMap": true,
 		"declaration": false,
