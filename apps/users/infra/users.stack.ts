@@ -112,7 +112,10 @@ export class UsersStack extends StageStack {
 				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
 			},
 		});
+
+		publicUserIdRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
 		publicUserIdRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+		publicUserIdRoute.addMethod('PUT', new apigateway.LambdaIntegration(lambdaResource));
 
 		// users/avatar
 		const avatarResource = publicUserIdRoute.addResource('avatar', {

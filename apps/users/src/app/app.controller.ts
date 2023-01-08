@@ -1,9 +1,7 @@
-import { CreateUserDTO } from '@libs/users';
-import { Body, Controller, Get, Post, Request } from '@nestjs/common';
+import { CreateUserDTO, UpdateUserDTO } from '@libs/users';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Request } from '@nestjs/common';
 import { ControllerResponse } from '@shared/interfaces';
-import { S3 } from 'aws-sdk';
-// This is a hack to make Multer available in the Express namespace
-import 'multer';
+import { Request as ExpressRequest } from 'express';
 
 import { AppService } from './app.service';
 
@@ -16,38 +14,54 @@ export class AppController {
 		const userId = await this.appService.createUser(user);
 
 		return {
-			message: 'User created successfully',
+			message: 'User successfully created',
 			data: { userId },
 		};
 	}
 
-	@Post(':userId/avatar')
-	async uploadFile(@Request() req: any) {
-		const s3 = new S3({
-			region: 'us-east-1',
-		});
+	@Put(':userId')
+	async updateUser(@Body() body: UpdateUserDTO, @Param('userId') userId: string) {
+		if (!userId) throw new BadRequestException('userId is required');
 
-		const res = await s3
-			.upload({
-				Bucket: 'newpet-dev-images',
-				Key: 'avatar.jpg',
-				ContentType: 'image/jpeg',
-				Body: req.body.file,
-			})
-			.promise();
+		await this.appService.updateUser(body, userId);
 
 		return {
-			message: 'File uploaded successfully',
-			data: { ...res },
+			message: 'User successfully updated',
+		};
+	}
+
+	@Post(':userId/avatar')
+	async uploadFile(@Request() req: ExpressRequest, @Param('userId') userId: string) {
+		if (!userId) throw new BadRequestException('userId is required');
+
+		if (!req.body.file || typeof req.body.file !== 'string' || !req.body.file.length) {
+			throw new BadRequestException('File must be a base64 encoded string');
+		}
+
+		const base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
+
+		await this.appService.updateAvatar(base64Data, userId);
+
+		return {
+			message: 'Avatar successfully updated',
 		};
 	}
 
 	@Get()
-	async getData() {
+	async listUsers() {
 		const docs = await this.appService.getUsers();
 
 		return {
-			data: { ...docs },
+			data: docs,
+		};
+	}
+
+	@Get(':userId')
+	async getUserById(@Param('userId') userId) {
+		const user = await this.appService.getUserById(userId);
+
+		return {
+			data: user,
 		};
 	}
 }

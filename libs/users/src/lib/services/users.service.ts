@@ -1,9 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { S3 } from 'aws-sdk';
+import * as FileType from 'file-type';
 import { Connection, Model } from 'mongoose';
 
 import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
-import { User, UserDocument, UserSchema } from '../schemas/users.schema';
+import { UpdateUserDTO } from '../dtos/update-user.dto';
+import { User } from '../interfaces/user.interface';
+import { UserDocument, UserSchema } from '../schemas/users.schema';
 
+const s3 = new S3({
+	region: 'us-east-1',
+});
 @Injectable()
 export class UsersService {
 	constructor(@MongooseInjectConnection() private readonly mongooseConn: Connection) {
@@ -39,29 +46,81 @@ export class UsersService {
 		return userModel._id.toString();
 	}
 
-	async findById(userId: string): Promise<UserDocument> {
+	async uploadFile(base64FileString: string, userId: string, fileName: string): Promise<string> {
+		const binaryData = Buffer.from(base64FileString, 'base64');
+
+		const fileInfo = await FileType.fromBuffer(binaryData);
+
+		if (!fileInfo) throw new InternalServerErrorException('Could not retrieve file information');
+
+		const { ext = 'jpg', mime = 'image/jpeg' } = fileInfo;
+		const key = `${userId}/${fileName}.` + ext;
+
+		const res = await s3
+			.upload({
+				Bucket: 'newpet-dev-images',
+				Key: key,
+				ContentType: mime,
+				ContentEncoding: 'base64',
+				Body: binaryData,
+			})
+			.promise();
+
+		return res.Location;
+	}
+
+	async updateAvatar(base64FileString: string, userId: string): Promise<void> {
+		const user = await this.userModel().findById(userId);
+		if (!user) throw new NotFoundException('User not found');
+
+		const uploadedImageUrl = await this.uploadFile(base64FileString, userId, 'avatar');
+
+		await user.update({
+			$set: { avatar: uploadedImageUrl },
+		});
+	}
+
+	async updateUser(data: UpdateUserDTO, userId: string) {
+		const user = await this.userModel().findById(userId);
+		if (!user) throw new NotFoundException('User not found');
+
+		await user.update({
+			$set: { ...data },
+		});
+	}
+
+	async findById(userId: string, includePassword = false): Promise<User> {
 		console.log('Find user on mongodb by id attempt: ', userId);
 
-		const user = await this.userModel().findById(userId);
+		const user = await this.userModel().findById<User>(userId);
 		if (!user) throw new NotFoundException('User not found');
 
 		console.log('Find user on mongodb by id success', user);
 
+		if (!includePassword) delete user.password;
 		return user;
 	}
 
-	async list(): Promise<Omit<UserDocument, 'password'>[]> {
+	async list(): Promise<Omit<User, 'password'>[]> {
 		console.log('List users on mongodb attempt');
-		const users = await this.userModel().find(
-			{},
-			{
-				_id: 1,
-				name: 1,
-				email: 1,
-				createdAt: 1,
-				updatedAt: 1,
-			}
-		);
+		const users = await this.userModel()
+			.find<User>(
+				{},
+				{
+					_id: 1,
+					name: 1,
+					email: 1,
+					avatar: 1,
+					createdAt: 1,
+					updatedAt: 1,
+				},
+				{
+					skip: 0,
+					limit: 10,
+				}
+			)
+			.exec();
+
 		console.log('List users on mongodb success', users);
 
 		return users;
