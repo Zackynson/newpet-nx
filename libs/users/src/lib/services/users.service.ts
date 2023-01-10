@@ -44,6 +44,12 @@ export class UsersService {
 		return compare(password, hash);
 	}
 
+	async findByEmail(email: string, dbName?: string) {
+		const model = this.userModel(dbName);
+
+		return model.findOne({ email: email });
+	}
+
 	/**
 	 * Creates a UserDocument and persist it.
 	 *
@@ -53,7 +59,7 @@ export class UsersService {
 	async create(params: { user: Partial<UserInterface>; dbName?: string }): Promise<string> {
 		const model = this.userModel(params.dbName);
 
-		const userExists = await model.findOne({ email: params.user.email });
+		const userExists = await this.findByEmail(params.user.email as string);
 		if (userExists?.id) throw new ForbiddenException('User already registered');
 
 		const encryptedPassword = await this.encryptPassword(params.user?.password as string);

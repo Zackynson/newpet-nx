@@ -1,7 +1,7 @@
 import { CreateUserDTO, UpdateUserDTO } from '@libs/users';
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Request } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ControllerResponse } from '@shared/interfaces';
-import { Request as ExpressRequest } from 'express';
 
 import { AppService } from './app.service';
 
@@ -19,34 +19,33 @@ export class AppController {
 		};
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Put(':userId')
-	async updateUser(@Body() body: UpdateUserDTO, @Param('userId') userId: string) {
-		if (!userId) throw new BadRequestException('userId is required');
-
-		await this.appService.updateUser(body, userId);
+	async updateUser(@Body() body: UpdateUserDTO, @Request() req: any) {
+		await this.appService.updateUser(body, req.user?.id);
 
 		return {
 			message: 'User successfully updated',
 		};
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Post(':userId/avatar')
-	async uploadFile(@Request() req: ExpressRequest, @Param('userId') userId: string) {
-		if (!userId) throw new BadRequestException('userId is required');
-
+	async uploadFile(@Request() req: any) {
 		if (!req.body.file || typeof req.body.file !== 'string' || !req.body.file.length) {
 			throw new BadRequestException('File must be a base64 encoded string');
 		}
 
 		const base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
 
-		await this.appService.updateAvatar(base64Data, userId);
+		await this.appService.updateAvatar(base64Data, req.user?.id);
 
 		return {
 			message: 'Avatar successfully updated',
 		};
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Get()
 	async listUsers() {
 		const docs = await this.appService.getUsers();
@@ -56,6 +55,7 @@ export class AppController {
 		};
 	}
 
+	@UseGuards(AuthGuard('jwt'))
 	@Get(':userId')
 	async getUserById(@Param('userId') userId) {
 		const user = await this.appService.getUserById(userId);

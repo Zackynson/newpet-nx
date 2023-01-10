@@ -1,8 +1,10 @@
 {
 	"version": 2,
 	"projects": {
+		"apps-auth": "apps/auth",
 		"apps-pets": "apps/pets",
 		"apps-users": "apps/users",
+		"auth": "libs/auth",
 		"infra": "infra",
 		"pets": "libs/pets",
 		"shared-config": "libs/shared/config",
