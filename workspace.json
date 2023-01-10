@@ -1,13 +1,14 @@
 {
 	"version": 2,
 	"projects": {
+		"apps-pets": "apps/pets",
 		"apps-users": "apps/users",
 		"infra": "infra",
+		"pets": "libs/pets",
 		"shared-config": "libs/shared/config",
 		"shared-infra": "libs/shared/infra",
 		"shared-interfaces": "libs/shared/interfaces",
 		"shared-mongoose": "libs/shared/mongoose",
-
 		"users": "libs/users"
 	},
 	"$schema": "./node_modules/nx/schemas/workspace-schema.json"

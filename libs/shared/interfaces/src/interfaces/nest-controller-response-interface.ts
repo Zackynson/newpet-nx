@@ -1,4 +1,4 @@
 export interface ControllerResponse {
-	message: string;
+	message?: string;
 	data?: any;
 }

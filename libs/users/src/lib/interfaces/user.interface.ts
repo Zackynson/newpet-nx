@@ -9,9 +9,9 @@ export class User {
 
 	password?: string;
 
-	avatar: string;
+	avatar?: string;
 
-	createdAt: Date;
+	createdAt?: Date;
 
-	updatedAt: Date;
+	updatedAt?: Date;
 }

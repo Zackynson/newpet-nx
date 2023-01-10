@@ -1,0 +1,21 @@
+service: serverless-example
+
+plugins:
+  - '@ns3/nx-serverless/plugin'
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+
+functions:
+  main:
+    handler: src/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'

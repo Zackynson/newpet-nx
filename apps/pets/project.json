@@ -1,0 +1,80 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "apps/pets/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/webpack:webpack",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/apps/pets",
+				"main": "apps/pets/src/main.ts",
+				"tsConfig": "apps/pets/tsconfig.app.json",
+				"webpackConfig": "apps/pets/webpack.config.js",
+				"externalDependencies": "all",
+				"target": "node",
+				"compiler": "tsc"
+			},
+			"configurations": {
+				"production": {
+					"optimization": false,
+					"extractLicenses": false,
+					"inspect": false,
+					"fileReplacements": [
+						{
+							"replace": "apps/pets/src/environments/environment.ts",
+							"with": "apps/pets/src/environments/environment.prod.ts"
+						}
+					]
+				}
+			}
+		},
+		"serve": {
+			"executor": "@ns3/nx-serverless:sls",
+			"options": {
+				"command": "offline",
+				"buildTarget": "apps-pets:build"
+			}
+		},
+		"install-dependencies": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					{
+						"command": "cp $(node -e \"console.log(require('find-up').sync('package-lock.json'))\") dist/apps/pets",
+						"forwardAllArgs": false
+					},
+					{
+						"command": "cd dist/apps/pets && npm ci",
+						"forwardAllArgs": false
+					}
+				],
+				"parallel": false
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["apps/pets/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/apps/pets"],
+			"options": {
+				"jestConfig": "apps/pets/jest.config.ts",
+				"passWithNoTests": true,
+				"codeCoverage": true
+			}
+		},
+		"register-deploy": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "STACK_PATH=apps/pets/infra/pets.stack.ts scripts/register-deploy.sh",
+				"forwardAllArgs": false
+			}
+		}
+	},
+	"tags": ["nestjs", "backend"]
+}

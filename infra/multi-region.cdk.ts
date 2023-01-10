@@ -5,6 +5,7 @@ import { addPrefix, Config, isValidRegion } from '@shared/infra';
 
 /** Resources */
 
+import { PetsStack } from '../apps/pets/infra/pets.stack';
 import { UsersStack } from '../apps/users/infra/users.stack';
 import { ApiGatewayDeploymentStack } from './shared/stacks/api-gateway-deployment.stack';
 import { ApiGatewayResourcesStack } from './shared/stacks/api-gateway-resources.stack';
@@ -75,9 +76,10 @@ export class MultiRegion {
 		 * a single unit.
 		 */
 		const usersStack = new UsersStack(this.app, this.prefix`UsersStack`, { env });
+		const petsStack = new PetsStack(this.app, this.prefix`PetsStack`, { env });
 
 		// All apps
-		const apps = [usersStack];
+		const apps = [usersStack, petsStack];
 
 		// All dependencies that those apps have
 		const appsDependencies = [securityGroupResourcesStack, apiGatewayResourcesStack];

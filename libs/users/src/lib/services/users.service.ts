@@ -5,8 +5,8 @@ import { Connection, Model } from 'mongoose';
 
 import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { UpdateUserDTO } from '../dtos/update-user.dto';
-import { User } from '../interfaces/user.interface';
-import { UserDocument, UserSchema } from '../schemas/users.schema';
+import { User as UserInterface } from '../interfaces/user.interface';
+import { User, UserDocument, UserSchema } from '../schemas/users.schema';
 
 const s3 = new S3({
 	region: 'us-east-1',
@@ -34,12 +34,12 @@ export class UsersService {
 	}
 
 	/**
-	 * Creates a TransactionDocument but does not persist it.
+	 * Creates a UserDocument and persist it.
 	 *
-	 * @param params.transaction transaction object to populate the document
+	 * @param params.user user object to populate the document
 	 * @param params.dbName Db name to have the Connection pointing to
 	 */
-	async create(params: { user?: Partial<User>; dbName?: string } = {}): Promise<string> {
+	async create(params: { user?: Partial<UserInterface>; dbName?: string } = {}): Promise<string> {
 		const model = this.userModel(params.dbName);
 		const userModel = await new model(params.user).save();
 
@@ -89,10 +89,10 @@ export class UsersService {
 		});
 	}
 
-	async findById(userId: string, includePassword = false): Promise<User> {
+	async findById(userId: string, includePassword = false): Promise<UserInterface> {
 		console.log('Find user on mongodb by id attempt: ', userId);
 
-		const user = await this.userModel().findById<User>(userId);
+		const user = await this.userModel().findById<UserInterface>(userId);
 		if (!user) throw new NotFoundException('User not found');
 
 		console.log('Find user on mongodb by id success', user);
@@ -101,10 +101,10 @@ export class UsersService {
 		return user;
 	}
 
-	async list(): Promise<Omit<User, 'password'>[]> {
+	async list(): Promise<Omit<UserInterface, 'password'>[]> {
 		console.log('List users on mongodb attempt');
 		const users = await this.userModel()
-			.find<User>(
+			.find<UserInterface>(
 				{},
 				{
 					_id: 1,

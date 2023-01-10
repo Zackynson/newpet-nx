@@ -21,6 +21,7 @@
 			"@infra": ["infra/index.ts"],
 			"@libs/auth": ["libs/auth/src/index.ts"],
 			"@libs/users": ["libs/users/src/index.ts"],
+			"@libs/pets": ["libs/pets/src/index.ts"],
 			"@shared/config": ["libs/shared/config/src/index.ts"],
 			"@shared/infra": ["libs/shared/infra/src/index.ts"],
 			"@shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
