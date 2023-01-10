@@ -102,5 +102,27 @@ export class PetsStack extends StageStack {
 
 		publicPetsRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
 		publicPetsRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+
+		// pets/:id
+		const publicPetsIdRoute = publicPetsRoute.addResource('{petId}', {
+			defaultCorsPreflightOptions: {
+				allowOrigins: apigateway.Cors.ALL_ORIGINS,
+				allowMethods: apigateway.Cors.ALL_METHODS,
+				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+			},
+		});
+
+		publicPetsIdRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
+
+		// pets/:id/images
+		const publicPetsIdAvatarRoute = publicPetsIdRoute.addResource('image', {
+			defaultCorsPreflightOptions: {
+				allowOrigins: apigateway.Cors.ALL_ORIGINS,
+				allowMethods: apigateway.Cors.ALL_METHODS,
+				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+			},
+		});
+
+		publicPetsIdAvatarRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
 	}
 }

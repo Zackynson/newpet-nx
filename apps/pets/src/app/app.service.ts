@@ -19,4 +19,12 @@ export class AppService {
 			pet: { ...data, owner: { name, _id: data.ownerId } },
 		});
 	}
+
+	async getPetById(id: string): Promise<Pet> {
+		return this.petsService.findById(id);
+	}
+
+	async uploadImage(base64FileString: string, userId: string): Promise<void> {
+		await this.petsService.uploadImage(base64FileString, userId);
+	}
 }

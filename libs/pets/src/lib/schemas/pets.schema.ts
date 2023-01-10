@@ -23,6 +23,9 @@ export class Pet {
 	type: string;
 
 	@Prop()
+	images: string[];
+
+	@Prop()
 	breed: string;
 
 	@Prop()

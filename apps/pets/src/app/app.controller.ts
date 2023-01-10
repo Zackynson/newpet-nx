@@ -1,7 +1,7 @@
 import { CreatePetDTO } from '@libs/pets';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
 import { ControllerResponse } from '@shared/interfaces';
-
+import { Request as ExpressRequest } from 'express';
 import { AppService } from './app.service';
 
 @Controller('pets')
@@ -24,6 +24,31 @@ export class AppController {
 		return {
 			message: 'Pet successfully created',
 			data: petId,
+		};
+	}
+
+	@Get(':petId')
+	async getPetById(@Param('petId') petId: string): Promise<ControllerResponse> {
+		const pet = await this.appService.getPetById(petId);
+		return {
+			data: pet,
+		};
+	}
+
+	@Post(':petId/image')
+	async uploadFile(@Request() req: ExpressRequest, @Param('petId') petId: string) {
+		if (!petId) throw new BadRequestException('petId is required');
+
+		if (!req.body.file || typeof req.body.file !== 'string' || !req.body.file.length) {
+			throw new BadRequestException('File must be a base64 encoded string');
+		}
+
+		const base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
+
+		await this.appService.uploadImage(base64Data, petId);
+
+		return {
+			message: 'Image successfully uploaded',
 		};
 	}
 }

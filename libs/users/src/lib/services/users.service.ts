@@ -54,7 +54,7 @@ export class UsersService {
 		if (!fileInfo) throw new InternalServerErrorException('Could not retrieve file information');
 
 		const { ext = 'jpg', mime = 'image/jpeg' } = fileInfo;
-		const key = `${userId}/${fileName}.` + ext;
+		const key = `users/${userId}/${fileName}.` + ext;
 
 		const res = await s3
 			.upload({
