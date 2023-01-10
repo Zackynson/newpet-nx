@@ -20,12 +20,7 @@
 		"titleBar.activeBackground": "#333D6B",
 		"titleBar.activeForeground": "#FAFBFD"
 	},
-	"conventionalCommits.scopes": [
-		"nx",
-		"infra",
-		"shared-interfaces",
-		"user",
-	],
+	"conventionalCommits.scopes": ["nx", "infra", "shared-interfaces", "user", "pets"],
 	"[typescript]": {
 		"editor.tabSize": 2,
 		"editor.insertSpaces": false

@@ -16,7 +16,7 @@ describe('AppController', () => {
 	describe('getData', () => {
 		it('should return "Hello world!"', () => {
 			const appController = app.get<AppController>(AppController);
-			expect(appController.;ist()).toEqual({
+			expect(appController.listPets()).toEqual({
 				message: 'Hello world!',
 			});
 		});
