@@ -1,9 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { S3 } from 'aws-sdk';
+import { compare, hash } from 'bcryptjs';
 import * as FileType from 'file-type';
 import { Connection, Model } from 'mongoose';
-
-import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { UpdateUserDTO } from '../dtos/update-user.dto';
 import { User as UserInterface } from '../interfaces/user.interface';
 import { User, UserDocument, UserSchema } from '../schemas/users.schema';
@@ -11,6 +11,9 @@ import { User, UserDocument, UserSchema } from '../schemas/users.schema';
 const s3 = new S3({
 	region: 'us-east-1',
 });
+
+const BCRYPT_SALT_ROUNDS = 12;
+
 @Injectable()
 export class UsersService {
 	constructor(@MongooseInjectConnection() private readonly mongooseConn: Connection) {
@@ -33,15 +36,28 @@ export class UsersService {
 		);
 	}
 
+	async encryptPassword(password: string) {
+		return hash(password, BCRYPT_SALT_ROUNDS);
+	}
+
+	async comparePasswods(password: string, hash: string) {
+		return compare(password, hash);
+	}
+
 	/**
 	 * Creates a UserDocument and persist it.
 	 *
 	 * @param params.user user object to populate the document
 	 * @param params.dbName Db name to have the Connection pointing to
 	 */
-	async create(params: { user?: Partial<UserInterface>; dbName?: string } = {}): Promise<string> {
+	async create(params: { user: Partial<UserInterface>; dbName?: string }): Promise<string> {
 		const model = this.userModel(params.dbName);
-		const userModel = await new model(params.user).save();
+
+		const userExists = await model.findOne({ email: params.user.email });
+		if (userExists?.id) throw new ForbiddenException('User already registered');
+
+		const encryptedPassword = await this.encryptPassword(params.user?.password as string);
+		const userModel = await new model({ ...params.user, password: encryptedPassword }).save();
 
 		return userModel._id.toString();
 	}

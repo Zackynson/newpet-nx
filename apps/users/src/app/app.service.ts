@@ -1,11 +1,15 @@
 import { CreateUserDTO, UpdateUserDTO, UsersService } from '@libs/users';
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
 	constructor(@Inject(UsersService) private readonly userService: UsersService) {}
 
 	async createUser(user: CreateUserDTO): Promise<string> {
+		if (user.confirmPassword !== user.password) {
+			throw new BadRequestException('Password and confirm password are not the same');
+		}
+
 		return this.userService.create({
 			user,
 		});
