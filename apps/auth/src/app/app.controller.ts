@@ -1,6 +1,6 @@
 import { AuthService } from '@libs/auth';
 import { UserInterface } from '@libs/users';
-import { Controller, Inject, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request as ExpressRequest } from 'express';
 
@@ -8,13 +8,21 @@ import { Request as ExpressRequest } from 'express';
 export class AppController {
 	constructor(@Inject(AuthService) private readonly authService: AuthService) {}
 
-	@Post('login')
 	@UseGuards(AuthGuard('local'))
-	async login(@Request() request: ExpressRequest) {
-		const token = await this.authService.login(request.user as UserInterface);
+	@Post('login')
+	async login(@Request() req: ExpressRequest) {
+		const token = await this.authService.login(req.user as UserInterface);
 
 		return {
 			token,
 		};
+	}
+
+	@UseGuards(AuthGuard('jwt'))
+	@Get('me')
+	async me(@Request() req: any) {
+		const userId = req.user?.id;
+
+		return this.authService.getUserById(userId);
 	}
 }

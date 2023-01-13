@@ -119,7 +119,7 @@ export class UsersService {
 
 		console.log('Find user on mongodb by id success', user);
 
-		if (!includePassword) delete user.password;
+		if (!includePassword) user.password = undefined;
 		return user;
 	}
 

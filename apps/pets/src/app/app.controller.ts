@@ -1,9 +1,11 @@
 import { CreatePetDTO } from '@libs/pets';
-import { BadRequestException, Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ControllerResponse } from '@shared/interfaces';
 import { Request as ExpressRequest } from 'express';
 import { AppService } from './app.service';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('pets')
 export class AppController {
 	constructor(private readonly appService: AppService) {}

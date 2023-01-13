@@ -98,5 +98,15 @@ export class AuthStack extends StageStack {
 		});
 
 		publicLoginRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+
+		const publicMeRoute = publicAuthRoute.addResource('me', {
+			defaultCorsPreflightOptions: {
+				allowOrigins: apigateway.Cors.ALL_ORIGINS,
+				allowMethods: apigateway.Cors.ALL_METHODS,
+				allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+			},
+		});
+
+		publicMeRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
 	}
 }

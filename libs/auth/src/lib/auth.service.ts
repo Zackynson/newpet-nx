@@ -1,4 +1,4 @@
-import { UsersService } from '@libs/users';
+import { User, UsersService } from '@libs/users';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
@@ -14,6 +14,10 @@ export class AuthService {
 		@Inject(UsersService) private readonly userService: UsersService,
 		@Inject(JwtService) private readonly jwtService: JwtService
 	) {}
+
+	async getUserById(userId: string): Promise<User> {
+		return (await this.userService.findById(userId)) as User;
+	}
 
 	async login(user: TokenPayload): Promise<string> {
 		const payload = {
