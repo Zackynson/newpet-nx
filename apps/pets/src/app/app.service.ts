@@ -12,11 +12,11 @@ export class AppService {
 		return this.petsService.list();
 	}
 
-	async createPet(data: CreatePetDTO): Promise<string> {
-		const { name } = await this.usersService.findById(data.ownerId);
+	async createPet(data: CreatePetDTO, ownerId: string): Promise<string> {
+		const { name } = await this.usersService.findById(ownerId);
 
 		return this.petsService.create({
-			pet: { ...data, owner: { name, _id: data.ownerId } },
+			pet: { ...data, ownerId, owner: { name, _id: ownerId } },
 		});
 	}
 
@@ -24,7 +24,7 @@ export class AppService {
 		return this.petsService.findById(id);
 	}
 
-	async uploadImage(base64FileString: string, userId: string): Promise<void> {
-		await this.petsService.uploadImage(base64FileString, userId);
+	async uploadImage(base64FileString: string, petId: string, ownerId: string): Promise<void> {
+		await this.petsService.uploadImage(base64FileString, petId, ownerId);
 	}
 }

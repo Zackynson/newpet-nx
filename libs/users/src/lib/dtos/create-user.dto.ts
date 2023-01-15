@@ -5,16 +5,30 @@ export class CreateUserDTO {
 	@IsNotEmpty()
 	name: string;
 
-	@IsString()
-	@IsNotEmpty()
-	@IsEmail()
+	@IsString({
+		message: 'Email deve ser uma string',
+	})
+	@IsNotEmpty({
+		message: 'Email não pode ser vazio',
+	})
+	@IsEmail({
+		message: 'Email inválido',
+	})
 	email: string;
 
-	@IsString()
-	@IsNotEmpty()
+	@IsString({
+		message: 'Senha deve ser uma string',
+	})
+	@IsNotEmpty({
+		message: 'Senha não pode ser vazio',
+	})
 	password: string;
 
-	@IsString()
-	@IsNotEmpty()
+	@IsString({
+		message: 'Confirmação de senha deve ser uma string',
+	})
+	@IsNotEmpty({
+		message: 'Confirmação de senha não pode ser vazio',
+	})
 	confirmPassword: string;
 }

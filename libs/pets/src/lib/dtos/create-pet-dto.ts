@@ -1,4 +1,4 @@
-import { IsEnum, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { PetType } from '../enums/pet-type.enum';
 
 /**
@@ -21,9 +21,4 @@ export class CreatePetDTO {
 	@IsString()
 	@IsNotEmpty()
 	birthDate: string;
-
-	@IsString()
-	@IsNotEmpty()
-	@IsMongoId()
-	ownerId: string;
 }

@@ -83,9 +83,13 @@ export class PetsService {
 		return pet;
 	}
 
-	async uploadImage(base64FileString: string, petId: string): Promise<void> {
+	async uploadImage(base64FileString: string, petId: string, ownerId: string): Promise<void> {
 		const pet = await this.petModel().findById(petId);
 		if (!pet) throw new NotFoundException('Pet not found');
+
+		if (pet?.ownerId !== ownerId) {
+			throw new BadRequestException('You cannot upload images to this pet');
+		}
 
 		const uploadedImageUrl = await this.uploadFile(base64FileString, petId, randomUUID());
 
