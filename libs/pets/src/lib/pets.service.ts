@@ -4,6 +4,7 @@ import { S3 } from 'aws-sdk';
 import { randomUUID } from 'crypto';
 import * as FileType from 'file-type';
 import { Connection, Model } from 'mongoose';
+import { UpdatePetDTO } from './dtos/update-pet.dto';
 import { Pet as PetInterface } from './interfaces/pets.interface';
 import { Pet, PetDocument, PetSchema } from './schemas';
 
@@ -81,6 +82,19 @@ export class PetsService {
 		if (!pet) throw new NotFoundException('Pet not found');
 
 		return pet;
+	}
+
+	async updatePet(data: UpdatePetDTO, petId: string, ownerId: string): Promise<void> {
+		const pet = await this.petModel().findById(petId);
+		if (!pet) throw new NotFoundException('Pet not found');
+
+		if (pet?.ownerId !== ownerId) {
+			throw new BadRequestException('You cannot update this pet information');
+		}
+
+		await pet.update({
+			$set: data,
+		});
 	}
 
 	async uploadImage(base64FileString: string, petId: string, ownerId: string): Promise<void> {

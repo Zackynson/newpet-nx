@@ -1,4 +1,4 @@
-import { CreatePetDTO, Pet, PetsService } from '@libs/pets';
+import { CreatePetDTO, Pet, PetsService, UpdatePetDTO } from '@libs/pets';
 import { UsersService } from '@libs/users';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -26,5 +26,9 @@ export class AppService {
 
 	async uploadImage(base64FileString: string, petId: string, ownerId: string): Promise<void> {
 		await this.petsService.uploadImage(base64FileString, petId, ownerId);
+	}
+
+	async updatePet(data: UpdatePetDTO, petId: string, ownerId: string): Promise<void> {
+		await this.petsService.updatePet(data, petId, ownerId);
 	}
 }

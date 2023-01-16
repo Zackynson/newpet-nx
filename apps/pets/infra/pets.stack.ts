@@ -113,6 +113,7 @@ export class PetsStack extends StageStack {
 		});
 
 		publicPetsIdRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
+		publicPetsIdRoute.addMethod('PUT', new apigateway.LambdaIntegration(lambdaResource));
 
 		// pets/:id/images
 		const publicPetsIdAvatarRoute = publicPetsIdRoute.addResource('image', {

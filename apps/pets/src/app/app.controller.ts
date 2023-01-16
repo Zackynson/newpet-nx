@@ -1,5 +1,5 @@
-import { CreatePetDTO } from '@libs/pets';
-import { BadRequestException, Body, Controller, Get, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { CreatePetDTO, UpdatePetDTO } from '@libs/pets';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ControllerResponse } from '@shared/interfaces';
 import { AppService } from './app.service';
@@ -24,6 +24,23 @@ export class AppController {
 		const ownerId = req.user.id;
 		console.log(query);
 		const petId = await this.appService.createPet(createPetDto, ownerId);
+
+		return {
+			message: 'Pet successfully created',
+			data: petId,
+		};
+	}
+
+	@UseGuards(AuthGuard('jwt'))
+	@Put(':petId')
+	async update(
+		@Body() updatePetDto: UpdatePetDTO,
+		@Request() req: any,
+		@Param('petId') petId: string
+	): Promise<ControllerResponse> {
+		const ownerId = req.user.id;
+
+		await this.appService.updatePet(updatePetDto, petId, ownerId);
 
 		return {
 			message: 'Pet successfully created',
