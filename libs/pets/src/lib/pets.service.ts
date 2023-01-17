@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { S3 } from 'aws-sdk';
 import { randomUUID } from 'crypto';
@@ -59,9 +59,8 @@ export class PetsService {
 		const binaryData = Buffer.from(base64FileString, 'base64');
 
 		const fileInfo = await FileType.fromBuffer(binaryData);
-		if (!fileInfo) throw new InternalServerErrorException('Could not retrieve file information');
 
-		const { ext = 'jpg', mime = 'image/jpeg' } = fileInfo;
+		const { ext = 'jpg', mime = 'image/jpeg' } = fileInfo || {};
 		const key = `pets/${userId}/${fileName}.` + ext;
 
 		const res = await s3

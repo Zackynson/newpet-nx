@@ -118,7 +118,7 @@ export class UsersStack extends StageStack {
 		publicUserIdRoute.addMethod('PUT', new apigateway.LambdaIntegration(lambdaResource));
 
 		// users/avatar
-		const avatarResource = publicUserIdRoute.addResource('avatar', {
+		const avatarResource = publicUsersRoute.addResource('avatar', {
 			defaultCorsPreflightOptions: {
 				allowOrigins: apigateway.Cors.ALL_ORIGINS,
 				allowMethods: apigateway.Cors.ALL_METHODS,

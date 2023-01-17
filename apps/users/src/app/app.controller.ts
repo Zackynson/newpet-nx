@@ -30,13 +30,13 @@ export class AppController {
 	}
 
 	@UseGuards(AuthGuard('jwt'))
-	@Post(':userId/avatar')
+	@Post('avatar')
 	async uploadFile(@Request() req: any) {
 		if (!req.body.file || typeof req.body.file !== 'string' || !req.body.file.length) {
 			throw new BadRequestException('File must be a base64 encoded string');
 		}
 
-		const base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
+		const base64Data = req.body.file.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
 
 		await this.appService.updateAvatar(base64Data, req.user?.id);
 

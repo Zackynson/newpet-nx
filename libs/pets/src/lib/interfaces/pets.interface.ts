@@ -1,4 +1,6 @@
 import { ObjectId } from 'mongodb';
+import { PetSize } from '../enums/pet-size.enum';
+import { PetType } from '../enums/pet-type.enum';
 
 export class Owner {
 	_id: string;
@@ -13,13 +15,17 @@ export class Pet {
 
 	name: string;
 
-	type: 'dog' | 'cat';
+	type: PetType;
 
 	breed: string;
+
+	address: string;
 
 	birthDate: string;
 
 	ownerId: string;
+
+	size: PetSize;
 
 	// populated from ownerId
 	owner?: Owner;

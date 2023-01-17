@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { S3 } from 'aws-sdk';
 import { compare, hash } from 'bcryptjs';
@@ -73,9 +73,7 @@ export class UsersService {
 
 		const fileInfo = await FileType.fromBuffer(binaryData);
 
-		if (!fileInfo) throw new InternalServerErrorException('Could not retrieve file information');
-
-		const { ext = 'jpg', mime = 'image/jpeg' } = fileInfo;
+		const { ext = 'jpg', mime = 'image/jpeg' } = fileInfo || {};
 		const key = `users/${userId}/${fileName}.` + ext;
 
 		const res = await s3

@@ -29,6 +29,12 @@ export class Pet {
 	breed: string;
 
 	@Prop()
+	address: string;
+
+	@Prop()
+	size: string;
+
+	@Prop()
 	birthDate: string;
 
 	@Prop()

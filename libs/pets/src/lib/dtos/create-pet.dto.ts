@@ -1,4 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { PetSize } from '../enums/pet-size.enum';
 import { PetType } from '../enums/pet-type.enum';
 
 /**
@@ -21,4 +22,13 @@ export class CreatePetDTO {
 	@IsString()
 	@IsNotEmpty()
 	birthDate: string;
+
+	@IsString()
+	@IsNotEmpty()
+	address: string;
+
+	@IsString()
+	@IsNotEmpty()
+	@IsEnum(PetSize)
+	size: PetSize;
 }
