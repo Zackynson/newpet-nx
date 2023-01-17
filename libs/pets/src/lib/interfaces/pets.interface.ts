@@ -21,6 +21,8 @@ export class Pet {
 
 	address: string;
 
+	images: string[];
+
 	birthDate: string;
 
 	ownerId: string;
