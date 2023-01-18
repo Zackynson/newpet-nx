@@ -11,6 +11,8 @@ export class User {
 
 	avatar?: string;
 
+	phone?: string;
+
 	createdAt?: Date;
 
 	updatedAt?: Date;

@@ -22,6 +22,9 @@ export class User {
 	avatar: string;
 
 	@Prop()
+	phone: string;
+
+	@Prop()
 	createdAt: Date;
 
 	@Prop()
