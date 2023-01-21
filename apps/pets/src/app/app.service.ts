@@ -28,6 +28,10 @@ export class AppService {
 		await this.petsService.uploadImage(base64FileString, petId, ownerId);
 	}
 
+	async deleteImage(imageUrl: string, petId: string, ownerId: string): Promise<void> {
+		await this.petsService.deleteImage(imageUrl, petId, ownerId);
+	}
+
 	async updatePet(data: UpdatePetDTO, petId: string, ownerId: string): Promise<void> {
 		await this.petsService.updatePet(data, petId, ownerId);
 	}

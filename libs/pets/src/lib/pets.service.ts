@@ -76,6 +76,16 @@ export class PetsService {
 		return res.Location;
 	}
 
+	async deleteFile(imageUrl: string): Promise<void> {
+		const imageKey = imageUrl.replace('https://newpet-dev-images.s3.amazonaws.com/', '');
+		await s3
+			.deleteObject({
+				Bucket: 'newpet-dev-images',
+				Key: imageKey,
+			})
+			.promise();
+	}
+
 	async findById(petId: string): Promise<PetInterface> {
 		const pet = await this.petModel().findById<PetInterface>(petId);
 		if (!pet) throw new NotFoundException('Pet not found');
@@ -108,6 +118,25 @@ export class PetsService {
 
 		await pet.update({
 			$push: { images: uploadedImageUrl },
+		});
+	}
+
+	async deleteImage(imageUrl: string, petId: string, ownerId: string): Promise<void> {
+		const pet = await this.petModel().findById(petId);
+		if (!pet) throw new NotFoundException('Pet not found');
+
+		if (pet?.ownerId !== ownerId) {
+			throw new BadRequestException('You cannot delete images from this pet');
+		}
+
+		if (!pet?.images.includes(imageUrl)) {
+			throw new NotFoundException('Image not found');
+		}
+
+		await this.deleteFile(imageUrl);
+
+		await pet.update({
+			$pull: { images: { $eq: imageUrl } },
 		});
 	}
 }

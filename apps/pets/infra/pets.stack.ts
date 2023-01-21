@@ -125,5 +125,6 @@ export class PetsStack extends StageStack {
 		});
 
 		publicPetsIdAvatarRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+		publicPetsIdAvatarRoute.addMethod('DELETE', new apigateway.LambdaIntegration(lambdaResource));
 	}
 }

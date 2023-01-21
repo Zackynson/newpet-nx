@@ -1,5 +1,17 @@
 import { CreatePetDTO, UpdatePetDTO } from '@libs/pets';
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Post,
+	Put,
+	Query,
+	Request,
+	UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ControllerResponse } from '@shared/interfaces';
 import { AppService } from './app.service';
@@ -73,6 +85,20 @@ export class AppController {
 
 		return {
 			message: 'Image successfully uploaded',
+		};
+	}
+
+	@UseGuards(AuthGuard('jwt'))
+	@Delete(':petId/image')
+	async deleteFile(@Request() req: any, @Param('petId') petId: string, @Query('imageUrl') imageUrl: string) {
+		if (!petId) throw new BadRequestException('petId is required');
+		if (!imageUrl) throw new BadRequestException('imageUrl is required');
+
+		const ownerId = req.user.id;
+		await this.appService.deleteImage(imageUrl, petId, ownerId);
+
+		return {
+			message: 'Image successfully deleted',
 		};
 	}
 }
