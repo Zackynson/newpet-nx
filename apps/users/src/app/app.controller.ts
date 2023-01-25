@@ -20,7 +20,7 @@ export class AppController {
 	}
 
 	@UseGuards(AuthGuard('jwt'))
-	@Put(':userId')
+	@Put()
 	async updateUser(@Body() body: UpdateUserDTO, @Request() req: any) {
 		await this.appService.updateUser(body, req.user?.id);
 

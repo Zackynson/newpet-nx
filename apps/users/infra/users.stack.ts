@@ -103,6 +103,7 @@ export class UsersStack extends StageStack {
 
 		publicUsersRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
 		publicUsersRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
+		publicUsersRoute.addMethod('PUT', new apigateway.LambdaIntegration(lambdaResource));
 
 		// users/{userId}
 		const publicUserIdRoute = publicUsersRoute.addResource('{userId}', {
@@ -114,8 +115,6 @@ export class UsersStack extends StageStack {
 		});
 
 		publicUserIdRoute.addMethod('GET', new apigateway.LambdaIntegration(lambdaResource));
-		publicUserIdRoute.addMethod('POST', new apigateway.LambdaIntegration(lambdaResource));
-		publicUserIdRoute.addMethod('PUT', new apigateway.LambdaIntegration(lambdaResource));
 
 		// users/avatar
 		const avatarResource = publicUsersRoute.addResource('avatar', {
