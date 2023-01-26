@@ -102,9 +102,21 @@ export class UsersService {
 
 	async updateUser(data: UpdateUserDTO, userId: string) {
 		const user = await this.userModel().findById(userId);
-		if (!user) throw new NotFoundException('User not found');
+		if (!user) {
+			console.log('User not found');
+			throw new NotFoundException('User not found');
+		}
 
-		await user.update({ $set: data });
+		console.log('update user data', data);
+		const updatedUser = await user.update(
+			{
+				phone: data.phone,
+				name: data.name,
+			},
+			{ new: true }
+		);
+
+		console.log('update info', updatedUser);
 	}
 
 	async findById(userId: string, includePassword = false): Promise<UserInterface> {

@@ -16,11 +16,11 @@ export class AppService {
 	}
 
 	async updateAvatar(base64FileString: string, userId: string): Promise<void> {
-		await this.userService.updateAvatar(base64FileString, userId);
+		return this.userService.updateAvatar(base64FileString, userId);
 	}
 
 	async updateUser(data: UpdateUserDTO, userId: string): Promise<void> {
-		this.userService.updateUser(data, userId);
+		return this.userService.updateUser(data, userId);
 	}
 
 	async getUsers() {
