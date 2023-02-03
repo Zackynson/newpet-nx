@@ -11,8 +11,6 @@ export enum Stage {
 export interface Config {
 	/** Project name  */
 	project: string;
-	/** Orchestrator Infra Project name  */
-	orchestratorInfraProject: string;
 	/** Account ID  */
 	account: string;
 	/** Regions that the project is present  */
@@ -39,13 +37,6 @@ export interface AddPrefixOptions {
  */
 export function getProjectName(scope: App | Construct): string | undefined {
 	return scope.node.tryGetContext('project');
-}
-
-/**
- * Get the Orchestrator Infra project name defined in the context.
- */
-export function getOrchestratorInfraProjectName(scope: App | Construct): string | undefined {
-	return scope.node.tryGetContext('orchestratorInfraProject');
 }
 
 /**
@@ -103,19 +94,13 @@ export function getConfig(scope: App | Construct, stage?: string) {
 	stage = stage || getStage();
 	const context = scope.node.tryGetContext(stage);
 	const project = getProjectName(scope);
-	const orchestratorInfraProject = getOrchestratorInfraProjectName(scope);
 
 	if (!project) {
 		throw new Error('You must define a project name in the context file.');
 	}
 
-	if (!orchestratorInfraProject) {
-		throw new Error('You must define the Orchestrator Infra project name in the context file.');
-	}
-
 	const conf: Config = {
 		project: project,
-		orchestratorInfraProject,
 		account: context.account,
 		regions: context.regions,
 		mainInfo: context.mainInfo,

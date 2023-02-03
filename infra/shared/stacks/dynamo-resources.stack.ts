@@ -8,18 +8,5 @@ export class DynamoResourcesStack extends StageStack {
 		super(scope, id, props);
 
 		regions = regions.filter((region) => this.region !== region);
-
-		// const authAccessKeysTable = new dynamodb.Table(this, 'AuthAccessKeysTable', {
-		// 	tableName: this.addPrefix`auth-access-keys`,
-		// 	billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-		// 	partitionKey: { name: 'tenantId', type: dynamodb.AttributeType.STRING },
-		// 	sortKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-		// 	replicationRegions: regions,
-		// });
-
-		// new CfnOutput(this, 'AuthAccessKeysTableName', {
-		// 	value: authAccessKeysTable.tableName,
-		// 	exportName: this.addPrefix`auth-access-keys-table-name`,
-		// });
 	}
 }

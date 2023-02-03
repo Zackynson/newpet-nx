@@ -16,7 +16,6 @@
 	},
 	"context": {
 		"project": "newpet",
-		"orchestratorInfraProject": "orchestrator",
 		"dev": {
 			"account": "566163553601",
 			"regions": ["us-east-1"],

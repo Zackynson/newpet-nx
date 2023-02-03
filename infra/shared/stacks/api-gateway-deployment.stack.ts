@@ -30,27 +30,5 @@ export class ApiGatewayDeploymentStack extends StageStack {
 		publicApi.deploymentStage = publicApiStage;
 
 		publicApi.node.addDependency(publicApiStage);
-
-		// /**
-		//  * Private API deployment
-		//  */
-
-		// const privateApi = apigateway.RestApi.fromRestApiAttributes(this, 'PrivateApi', {
-		// 	restApiId: Fn.importValue(this.addPrefix(constants.PRIVATE_API_ID)),
-		// 	rootResourceId: Fn.importValue(this.addPrefix(constants.PRIVATE_API_ROOT_RESOURCE_ID)),
-		// });
-
-		// const privateApiDeployment = new apigateway.Deployment(this, 'PrivateApiDeployment', {
-		// 	api: privateApi,
-		// });
-
-		// const privateApiStage = new apigateway.Stage(this, 'PrivateApiDeploymentStage', {
-		// 	deployment: privateApiDeployment,
-		// 	stageName: this.stage,
-		// });
-
-		// privateApi.deploymentStage = privateApiStage;
-
-		// privateApi.node.addDependency(privateApiStage);
 	}
 }

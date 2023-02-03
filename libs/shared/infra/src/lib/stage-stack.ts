@@ -61,19 +61,6 @@ export class StageStack extends Stack {
 		});
 	}
 
-	/**
-	 * Add the Orchestrator Infra project prefix. This is useful if you want to
-	 * import a resource from that project.
-	 */
-	protected orcInfraAddPrefix(name: string | TemplateStringsArray) {
-		return buildUtils.addPrefix({
-			project: buildUtils.getOrchestratorInfraProjectName(this),
-			stage: this.stage,
-			region: this.region,
-			name,
-		});
-	}
-
 	protected isMainRegion(region?: string, stage?: string) {
 		return buildUtils.isMainRegion(this, region ?? this.region, stage);
 	}
