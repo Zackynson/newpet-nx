@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { S3 } from 'aws-sdk';
 import { compare, hash } from 'bcryptjs';
+import { randomUUID } from 'crypto';
 import * as FileType from 'file-type';
 import { Connection, Model } from 'mongoose';
 import { UpdateUserDTO } from '../dtos/update-user.dto';
@@ -89,15 +90,17 @@ export class UsersService {
 		return res.Location;
 	}
 
-	async updateAvatar(base64FileString: string, userId: string): Promise<void> {
+	async updateAvatar(base64FileString: string, userId: string): Promise<string> {
 		const user = await this.userModel().findById(userId);
 		if (!user) throw new NotFoundException('User not found');
 
-		const uploadedImageUrl = await this.uploadFile(base64FileString, userId, 'avatar');
+		const uploadedImageUrl = await this.uploadFile(base64FileString, userId, `avatar-${randomUUID()}`);
 
 		await user.update({
 			$set: { avatar: uploadedImageUrl },
 		});
+
+		return uploadedImageUrl;
 	}
 
 	async updateUser(data: UpdateUserDTO, userId: string) {

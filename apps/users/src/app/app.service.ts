@@ -15,7 +15,7 @@ export class AppService {
 		});
 	}
 
-	async updateAvatar(base64FileString: string, userId: string): Promise<void> {
+	async updateAvatar(base64FileString: string, userId: string): Promise<string> {
 		return this.userService.updateAvatar(base64FileString, userId);
 	}
 

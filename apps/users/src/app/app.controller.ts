@@ -38,10 +38,11 @@ export class AppController {
 
 		const base64Data = req.body.file.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
 
-		await this.appService.updateAvatar(base64Data, req.user?.id);
+		const url = await this.appService.updateAvatar(base64Data, req.user?.id);
 
 		return {
 			message: 'Avatar successfully updated',
+			data: { url },
 		};
 	}
 
