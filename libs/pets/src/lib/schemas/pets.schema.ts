@@ -35,7 +35,10 @@ export class Pet {
 	size: string;
 
 	@Prop()
-	birthDate: string;
+	gender: string;
+
+	@Prop()
+	age: string;
 
 	@Prop()
 	createdAt: Date;

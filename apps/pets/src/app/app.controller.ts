@@ -1,4 +1,4 @@
-import { CreatePetDTO, UpdatePetDTO } from '@libs/pets';
+import { CreatePetDTO, ListPetsFilterDTO, UpdatePetDTO } from '@libs/pets';
 import {
 	BadRequestException,
 	Body,
@@ -22,8 +22,8 @@ export class AppController {
 
 	@UseGuards(AuthGuard('jwt'))
 	@Get()
-	async listPets(): Promise<ControllerResponse> {
-		const list = await this.appService.listPets();
+	async listPets(@Query() query: ListPetsFilterDTO): Promise<ControllerResponse> {
+		const list = await this.appService.listPets(query);
 
 		return {
 			data: list,

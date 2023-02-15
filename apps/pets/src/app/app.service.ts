@@ -1,4 +1,4 @@
-import { CreatePetDTO, Pet, PetsService, UpdatePetDTO } from '@libs/pets';
+import { CreatePetDTO, ListPetsFilterDTO, Pet, PetsService, UpdatePetDTO } from '@libs/pets';
 import { UsersService } from '@libs/users';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -8,8 +8,8 @@ export class AppService {
 		@Inject(UsersService) private readonly usersService: UsersService,
 		@Inject(PetsService) private readonly petsService: PetsService
 	) {}
-	async listPets(): Promise<Pet[]> {
-		return this.petsService.list();
+	async listPets(filter: ListPetsFilterDTO): Promise<Pet[]> {
+		return this.petsService.list(filter);
 	}
 
 	async createPet(data: CreatePetDTO, ownerId: string): Promise<string> {

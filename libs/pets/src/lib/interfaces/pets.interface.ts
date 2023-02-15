@@ -23,11 +23,13 @@ export class Pet {
 
 	images: string[];
 
-	birthDate: string;
+	age: string;
 
 	ownerId: string;
 
 	size: PetSize;
+
+	gender: string;
 
 	// populated from ownerId
 	owner?: Owner;

@@ -3,7 +3,8 @@ import { InjectConnection as MongooseInjectConnection } from '@nestjs/mongoose';
 import { S3 } from 'aws-sdk';
 import { randomUUID } from 'crypto';
 import * as FileType from 'file-type';
-import { Connection, Model } from 'mongoose';
+import { Connection, FilterQuery, Model } from 'mongoose';
+import { ListPetsFilterDTO } from './dtos/list-pet-filter.dto';
 import { UpdatePetDTO } from './dtos/update-pet.dto';
 import { Pet as PetInterface } from './interfaces/pets.interface';
 import { Pet, PetDocument, PetSchema } from './schemas';
@@ -24,12 +25,12 @@ export class PetsService {
 	 * @param dbName Db name to have the Connection pointing to
 	 * @returns Model<PetDocument> Model using the defined db
 	 */
-	petModel(dbName = 'newpet') {
+	petModel() {
 		return (
 			this.mongooseConn
 				// Creates a cached connection to dbName. All calls to `connection.useDb(dbName, { useCache: true })` will return the same
 				// connection instance as opposed to creating a new connection instance
-				.useDb(dbName, { useCache: true })
+				.useDb('newpet', { useCache: true })
 				.model(Pet.name, PetSchema) as Model<PetDocument>
 		);
 	}
@@ -40,18 +41,37 @@ export class PetsService {
 	 * @param params.pet pet object to populate the document
 	 * @param params.dbName Db name to have the Connection pointing to
 	 */
-	async create(params: { pet: Partial<PetInterface>; dbName?: string }): Promise<string> {
+	async create(params: { pet: Partial<PetInterface> }): Promise<string> {
 		if (!params.pet.ownerId) throw new BadRequestException('Invalid pet owner');
 
-		const model = this.petModel(params.dbName);
+		const model = this.petModel();
 		const petModel = await new model(params.pet).save();
 
 		return petModel._id.toString();
 	}
 
-	async list(dbName?: string): Promise<PetInterface[]> {
-		const model = this.petModel(dbName);
-		const pets = await model.find<PetInterface>().exec();
+	async list(filter: ListPetsFilterDTO): Promise<PetInterface[]> {
+		const model = this.petModel();
+
+		const query: FilterQuery<Pet> = {};
+
+		if (filter.type) {
+			query.type = filter.type;
+		}
+
+		if (filter.size) {
+			query.size = filter.size;
+		}
+
+		if (filter.gender) {
+			query.gender = filter.gender;
+		}
+
+		if (filter.age) {
+			query.age = filter.age;
+		}
+
+		const pets = await model.find<PetInterface>(query).exec();
 		return pets;
 	}
 
