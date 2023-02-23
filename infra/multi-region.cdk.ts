@@ -10,7 +10,10 @@ import { PetsStack } from '../apps/pets/infra/pets.stack';
 import { UsersStack } from '../apps/users/infra/users.stack';
 import { ApiGatewayDeploymentStack } from './shared/stacks/api-gateway-deployment.stack';
 import { ApiGatewayResourcesStack } from './shared/stacks/api-gateway-resources.stack';
+import { EventBridgeBusResourcesStack } from './shared/stacks/event-bridge-bus-resources.stack';
+import { EventBridgeIntegrationsStack } from './shared/stacks/event-bridge-integrations.stack';
 import { SecurityGroupResourcesStack } from './shared/stacks/security-group-resources.stack';
+import { SqsResourcesStack } from './shared/stacks/sqs-resources.stack';
 export interface MultiRegionConfig {
 	stage: string;
 	project: string;
@@ -63,6 +66,31 @@ export class MultiRegion {
 			env,
 		});
 
+		const sqsResourcesStack = new SqsResourcesStack(this.app, this.prefix`SqsResourcesStack`, { env });
+
+		const eventBridgeBusResourcesStack = new EventBridgeBusResourcesStack(
+			this.app,
+			this.prefix`EventBridgeBusResourcesStack`,
+			{
+				env,
+			}
+		);
+
+		const eventBridgeIntegrationsStack = new EventBridgeIntegrationsStack(
+			this.app,
+			this.prefix`EventBridgeIntegrationsStack`,
+			{ env }
+		);
+
+		eventBridgeIntegrationsStack.addDependency(
+			eventBridgeBusResourcesStack,
+			'We need to create SQS Queues to use them in EventBridge integrations.'
+		);
+
+		eventBridgeIntegrationsStack.addDependency(
+			sqsResourcesStack,
+			'We need to create SQS Queues to use them in EventBridge integrations.'
+		);
 		const apiGatewayResourcesStack = new ApiGatewayResourcesStack(this.app, this.prefix`ApiGatewayResourcesStack`, { env });
 		new ApiGatewayDeploymentStack(this.app, this.prefix`ApiGatewayDeploymentStack`, { env }).addDependency(
 			apiGatewayResourcesStack,

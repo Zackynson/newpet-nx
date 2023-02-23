@@ -144,7 +144,6 @@ export function addPrefix(options: AddPrefixOptions) {
 }
 
 export function applyDefaultTags(scope: App | Construct) {
-	Tags.of(scope).add('Owner', 'owner@caf.io');
-	Tags.of(scope).add('Team-Email', 'team@caf.io');
-	Tags.of(scope).add('Project-Name', 'projectName');
+	Tags.of(scope).add('Owner', 'crys.chb@hotmail.com');
+	Tags.of(scope).add('Project-Name', 'newpet');
 }

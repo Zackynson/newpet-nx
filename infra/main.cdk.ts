@@ -3,7 +3,6 @@
 import * as buildUtils from '@shared/infra';
 import { App } from 'aws-cdk-lib';
 import { MultiRegion } from './multi-region.cdk';
-import { DynamoResourcesStack } from './shared/stacks/dynamo-resources.stack';
 
 /**
  * The App construct doesn't require any initialization arguments, because it's the only
@@ -17,13 +16,13 @@ const app = new App();
  */
 const config = buildUtils.getConfig(app); // Get the config from the CDK Context for the current stage
 
-const prefix = (name: TemplateStringsArray) => {
-	return buildUtils.addPrefix({
-		project: config.project,
-		stage: config.stage,
-		name,
-	});
-};
+// const prefix = (name: TemplateStringsArray) => {
+// 	return buildUtils.addPrefix({
+// 		project: config.project,
+// 		stage: config.stage,
+// 		name,
+// 	});
+// };
 
 /**
  * All the regions the stacks should be deployed to.
@@ -31,12 +30,12 @@ const prefix = (name: TemplateStringsArray) => {
  */
 const regionsToDeploy = config.regions.sort();
 
-/**
- * Create resources which are not necessary to be created in each region
- */
-new DynamoResourcesStack(app, prefix`DynamoResourcesStack`, regionsToDeploy, {
-	env: { account: config.account, region: config.mainInfo.region },
-});
+// /**
+//  * Create resources which are not necessary to be created in each region
+//  */
+// new DynamoResourcesStack(app, prefix`DynamoResourcesStack`, regionsToDeploy, {
+// 	env: { account: config.account, region: config.mainInfo.region },
+// });
 
 /**
  * Iterate through all regions and deploy the resources
