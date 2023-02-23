@@ -19,8 +19,6 @@
 		"build:affected:dev": "npm run build:affected -- --base=dev --head=HEAD && npm install-deps:affected -- --base=dev --head=HEAD",
 		"build:affected:beta": "npm run build:affected -- --base=beta --head=HEAD && npm install-deps:affected -- --base=beta --head=HEAD",
 		"build:affected:prod": "npm run build:affected -- --base=master --head=HEAD && npm install-deps:affected -- --base=master --head=HEAD",
-		"register-deploy:affected": "nx affected --target=register-deploy",
-		"register-deploy:all": "./scripts/register-all-deploy.sh",
 		"deploy": "cdk deploy --require-approval never --all",
 		"build-and-deploy": " npx nx run-many --target=build --configuration=production --all && npx nx run-many --target=install-dependencies --all=true && cdk deploy"
 	},
